@@ -1,17 +1,27 @@
+
+PORT=3128
+SVRHOST=127.0.0.1
+
 info:
 	docker images
 
 build:
+	@echo "Building the image called 'docsquid'"
 	docker build . -t docsquid 
 
 run:
-	/usr/bin/docker run  -p 127.0.0.1:3128:3128/tcp  --cpus='4' -m 1G -h squidserver --rm --name squidserver docsquid 
-
+	@echo "Running the image called 'docsquid' and named the container 'squidserver'"
+	/usr/bin/docker run  -p $(SVRHOST):$(PORT):$(PORT)/tcp  --cpus='4' -m 1G -h squidserver --rm --name squidserver docsquid 
 
 stop:
+	@echo "Stopping container 'squidserver'"
 	/usr/bin/docker stop -t 2 squidserver 
 
 test:
-	nmap localhost -p 3000-
-	curl -x "http://localhost:3128" "https://google.com"
+	@echo "Setting squid server ..."
+	curl -x "http://$(SVRHOST):$(PORT)" "https://google.com"
 	@echo $@
+
+scan:
+	@echo "Scanning for squid server with nmap ..."
+	nmap $(SVRHOST) -p 1025- | grep $(PORT)

@@ -11,7 +11,7 @@ build:
 
 run:
 	@echo "Running the image called 'docsquid' and named the container 'squidserver'"
-	docker run  -p $(SVRHOST):$(PORT):$(PORT)/tcp  --cpus=4 -m 1G -h squidserver --rm --name squidserver docsquid 
+	docker run  -p $(SVRHOST):$(PORT):$(PORT)/tcp -m 1G -h squidserver --rm --name squidserver docsquid 
 
 stop:
 	@echo "Stopping container 'squidserver'"

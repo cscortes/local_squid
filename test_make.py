@@ -156,6 +156,57 @@ class TestExecuteCommands(unittest.TestCase):
         self.assertEqual(result, 0)
         mock_subprocess_run.assert_not_called()
 
+class TestMacrosInMakefile(unittest.TestCase):
+    def test_expand_macros(self):
+        """
+        Test that macros are expanded in Makefile.
+        """
+        macros = {'VAR1': 'value1', 'VAR2': 'value2'}
+        line = '$VAR1 $VAR2'
+        expected_result = 'value1 value2'
+        result = MK.expand_macros(macros, line)
+        self.assertEqual(result, expected_result)
+
+    def test_expand_macros_multiple_expansions(self):
+        """
+        Test that macros are expanded in Makefile multiple times.
+        """
+        macros = {'VAR1': 'value1', 'VAR2': 'value3 value2'}
+        line = '$VAR2 $VAR1'
+        expected_result = 'value3 value2 value1'
+        result = MK.expand_macros(macros, line)
+        self.assertEqual(result, expected_result)
+
+    def test_expand_macros_undefined_macro(self):
+        """
+        Test that undefined macros are left unchanged in Makefile.
+        """
+        macros = {'VAR1': 'value1'}
+        line = '$VAR1 $VAR2'
+        expected_result = 'value1 $VAR2'
+        result = MK.expand_macros(macros, line)
+        self.assertEqual(result, expected_result)
+
+    def test_expand_macros_example_from_comment(self):
+        """
+        Test that macro expansion in Makefile works as expected.
+        Based on the comment:
+        # VAR1 = value1
+        # echo "$(VAR1)"
+        # answer should be:
+        # value1
+        """
+        macros = {'VAR1': 'value1'}
+        line = 'echo "$(VAR1)"'
+        expected_result = 'echo "value1"'
+        result = MK.expand_macros(macros, line)
+        self.assertEqual(result, expected_result)
+
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
+

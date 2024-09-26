@@ -41,6 +41,7 @@ def parse_makefile(mkpath: str) -> List[Dict]:
         - line_number (int): the line number in the Makefile
         - commands (List[str]): a list of strings representing commands associated with the target
     """
+    macros: Dict[str, str] = {}
     target: str = None
     target_linenum: int = 0
     commands: List[str] = []
@@ -58,11 +59,16 @@ def parse_makefile(mkpath: str) -> List[Dict]:
             target = line[:-1]
             commands = []
             target_linenum = line_number
-        else:                           # Found a Command
+        else:                           # Found a Command or Macro
             if (not line) or (line.startswith('#')):
                 continue
-            commands.append((line_number, line))
-            
+            if '=' in line: # Found a Macro
+                macro_name, macro_value = line.split('=', 1)
+                macros[macro_name.strip()] = macro_value.strip()
+            else:
+                expanded_line = expand_macros(macros, line)
+                commands.append((line_number, expanded_line))
+                
     # Add the last target's commands to the list
     if target is not None:
         target_nodes.append(create_target_node(target_linenum, target, commands))
@@ -70,6 +76,23 @@ def parse_makefile(mkpath: str) -> List[Dict]:
         raise ValueError('Invalid syntax in Makefile')
     
     return target_nodes
+
+def expand_macros(macros: Dict[str, str], line: str) -> str:
+    """
+    Expand macros in a line.
+
+    Parameters:
+        macros (Dict[str, str]): dictionary of macros
+        line (str): line to expand macros in
+
+    Returns:
+        str: line with macros expanded
+    """
+    for macro_name, macro_value in macros.items():
+        macro = f"$({macro_name})"
+        if macro in line:
+            line = line.replace(macro, macro_value)
+    return line
 
 def execute_commands(target, commands):
     """Executes the given commands and returns the exit code."""
@@ -97,7 +120,6 @@ def main(prog, args):
         for target in targets:
             print(f"\t- {target['target']}")
         sys.exit(0)
-
 
     # search for target in targets
     for t in targets:

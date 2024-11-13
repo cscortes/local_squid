@@ -11,9 +11,10 @@ build: docker-compose.yaml
 	@echo "Building the image ..."
 	docker compose build --pull
 
+#Forground server
 serve run start server: build 
 	@echo "Running the image "
-	docker compose up -d 
+	docker compose up
 
 stop:
 	@echo "Stopping container ..."

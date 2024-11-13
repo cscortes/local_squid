@@ -22,8 +22,3 @@ services:
         limits:
           cpus: "2"
           memory: "1g"      
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-        max_attempts: 3
-        window: 120s

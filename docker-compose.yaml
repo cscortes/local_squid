@@ -9,15 +9,19 @@ services:
         COPY squid.conf /etc/squid 
         RUN rm -rf /var/run/squid.pid 
         RUN mkdir -p /cache && chown -R squid:squid /cache && chown -R squid:squid /var/log/squid 
-        RUN /usr/sbin/squid -N -f /etc/squid/squid.conf -z
+        RUN /usr/sbin/squid -N -z
     ports:
       - 3128:3128
-    entrypoint: "/usr/sbin/squid -N -d9"
+    entrypoint: "/usr/sbin/squid -f /etc/squid/squid.conf -N -d9"
     hostname: squidsvr
     image: local-squid-img
     container_name: local-squid
 
     deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "1g"      
       restart_policy:
         condition: on-failure
         delay: 10s

@@ -1,3 +1,4 @@
+.PHONY: info build serve run start server stop test scan 
 
 PORT=3128
 SVRHOST=127.0.0.1
@@ -5,17 +6,17 @@ SVRHOST=127.0.0.1
 info:
 	docker images
 
-build:
-	@echo "Building the image called 'docsquid'"
-	docker build . -t docsquid 
+build: docker-compose.yaml
+	@echo "Building the image ..."
+	docker compose build --pull
 
-run:
-	@echo "Running the image called 'docsquid' and named the container 'squidserver'"
-	docker run -d -p $(SVRHOST):$(PORT):$(PORT)/tcp -m 1G -h squidserver --rm --name squidserver docsquid 
+serve run start server: build 
+	@echo "Running the image "
+	docker compose up -d 
 
 stop:
-	@echo "Stopping container 'squidserver'"
-	docker stop -t 2 squidserver 
+	@echo "Stopping container ..."
+	docker compose down
 
 test:
 	@echo "Setting squid server ..."

@@ -1,0 +1,25 @@
+
+services:
+  cache-server:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM alpine:latest
+        RUN apk update && apk add squid bash vim 
+        COPY squid.conf /etc/squid 
+        RUN rm -rf /var/run/squid.pid 
+        RUN mkdir -p /cache && chown -R squid:squid /cache && chown -R squid:squid /var/log/squid 
+        RUN /usr/sbin/squid -N -f /etc/squid/squid.conf -z
+    ports:
+      - 3128:3128
+    entrypoint: "/usr/sbin/squid -N -d9"
+    hostname: squidsvr
+    image: local-squid-img
+    container_name: local-squid
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 120s

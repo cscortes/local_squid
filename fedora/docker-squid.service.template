@@ -6,13 +6,16 @@ Requires=docker.service
 [Service]
 Type=simple
 
-# $USER needs to be changed to a valid user for this system
-User=$USER
-Group=$USER
+# account 'USER' needs to be changed to a valid user for current system
+User=USER
+Group=USER
 
 # place to put other files
 ExecStart="/usr/local/bin/start.sh" 
 ExecStop= "/usr/local/bin/stop.sh"
+
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target

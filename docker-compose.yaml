@@ -7,18 +7,32 @@ services:
         FROM alpine:latest
         RUN apk update && apk add squid bash vim 
         COPY squid.conf /etc/squid 
-        RUN rm -rf /var/run/squid.pid 
-        RUN mkdir -p /cache && chown -R squid:squid /cache && chown -R squid:squid /var/log/squid 
-        RUN /usr/sbin/squid -N -z
+        RUN rm -rf /var/run/squid.pid && \
+          mkdir -p /cache && \
+          chown -R squid:squid /cache && \
+          chown -R squid:squid /var/log/squid && \
+          /usr/sbin/squid -N -z
     ports:
       - 3128:3128
     entrypoint: "/usr/sbin/squid -f /etc/squid/squid.conf -N -d9"
     hostname: squidsvr
     image: local-squid-img
-    container_name: local-squid
-
+    container_name: local-squid-cont
+    volumes:
+      - squidcache:/cache
     deploy:
       resources:
         limits:
           cpus: "2"
           memory: "1g"      
+    networks:
+      - shared_net
+
+# keep the old cache around
+volumes:
+  squidcache:
+
+# use a bridge network so can be used by others
+networks:
+  shared_net:
+    driver: bridge 

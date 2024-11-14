@@ -202,10 +202,8 @@ class TestMacrosInMakefile(unittest.TestCase):
         result = MK.expand_macros(macros, line)
         self.assertEqual(result, expected_result)
 
-
-
-
-
+# TODO: I've included some $(shell) commands, this may break 
+# make on Windows!
 
 if __name__ == '__main__':
     unittest.main()

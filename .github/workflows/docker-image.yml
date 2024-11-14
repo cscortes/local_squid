@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Run the server 
-      run: make start &
+    - name: Run the server in background mode
+      run: make bstart
     - name: Run the test
       run: make test
 

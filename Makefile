@@ -1,4 +1,4 @@
-.PHONY: info build serve run start server stop test scan 
+.PHONY: info build serve run start server stop test scan bserve brun bstart bserver
 
 PORT=3128
 SVRHOST=127.0.0.1
@@ -14,8 +14,14 @@ build: docker-compose.yaml
 
 #Forground server
 serve run start server: build 
-	@echo "Running the image "
+	@echo "Running the image in Forground"
 	docker compose up
+
+#Forground server
+bserve brun bstart bserver: build 
+	@echo "Running the image in background"
+	docker compose up -d 
+
 
 stop:
 	@echo "Stopping container ..."

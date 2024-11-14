@@ -9,18 +9,18 @@ on:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: make build 
   
   test:
+    runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
     - name: Test the docker image 
-      run: make bserver &
+      run: make start &
       run: make test
 
 

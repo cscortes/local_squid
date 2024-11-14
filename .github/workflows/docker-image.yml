@@ -22,7 +22,7 @@ jobs:
     - name: Run the server in background mode
       run: make bstart
     - name: Run the test
-      run: make test
+      run: sleep 30 && make test
 
 
   

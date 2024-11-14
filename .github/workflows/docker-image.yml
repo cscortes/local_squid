@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Test the docker image 
+    - name: Run the server 
       run: make start &
+    - name: Run the test
       run: make test
-
 
 
   

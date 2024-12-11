@@ -5,7 +5,9 @@ services:
       context: .
       dockerfile_inline: |
         FROM alpine:latest
-        RUN apk update && apk add squid bash vim 
+        RUN apk update 
+        RUN apk --no-cache add tzdata squid bash vim 
+        RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
         COPY squid.conf /etc/squid 
         RUN rm -rf /var/run/squid.pid && \
           mkdir -p /cache && \
@@ -15,11 +17,12 @@ services:
     ports:
       - 3128:3128
     entrypoint: "/usr/sbin/squid -f /etc/squid/squid.conf -N -d9"
-    hostname: squidsvr
+    hostname: local-squid
     image: local-squid-img
-    container_name: local-squid-cont
     volumes:
       - squidcache:/cache
+    environment:
+      - TZ=America/Denver
     deploy:
       resources:
         limits:

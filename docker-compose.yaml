@@ -19,6 +19,7 @@ services:
     entrypoint: "/usr/sbin/squid -f /etc/squid/squid.conf -N -d9"
     hostname: local-squid
     image: local-squid-img
+    container_name: local-squid
     volumes:
       - squidcache:/cache
     environment:

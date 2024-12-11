@@ -5,8 +5,21 @@ SVRHOST=127.0.0.1
 PROJECT_DIR=$(shell pwd)
 CURRENTUSER=$(shell whoami)
 
+CONTAINER_LIST=docker container list --filter "name=local-squid"
+DOCKER_LIST=docker images --filter "reference=local-squid-img"
+
+
 info:
-	docker images
+	@echo "===================================================================="
+	@echo "Container:"
+	@$(CONTAINER_LIST) | grep home-web || echo "No container Found!"
+	@echo "-------------------------------------------------------------------"
+	@echo "Images:"
+	@$(DOCKER_LIST) | grep home-web || echo "No image Found!"
+	@echo "-------------------------------------------------------------------"
+	@echo "Mounts:"
+	@echo "$(MOUNTS)"
+	@echo "===================================================================="
 
 build: docker-compose.yaml
 	@echo "Building the image ..."
@@ -22,6 +35,8 @@ bserve brun bstart bserver: build
 	@echo "Running the image in background"
 	docker compose up -d 
 
+run:
+	docker compose exec -i cache-server bash 
 
 stop:
 	@echo "Stopping container ..."
@@ -35,6 +50,14 @@ test:
 scan:
 	@echo "Scanning for squid server with nmap ..."
 	nmap $(SVRHOST) -p 1025- | grep $(PORT)
+
+clean: stop erase_drive
+	@$(CONTAINER_LIST) -q | xargs -r docker rm -fv 
+	@$(DOCKER_LIST) -q | xargs -r docker rmi 
+
+erase_drive:
+	@docker volume ls
+	@docker volume rm local_squid_squidcache
 
 create_scripts:
 	echo -e '#!/bin/bash\n' > fedora/start.sh

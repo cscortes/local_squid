@@ -2,9 +2,8 @@ from io import StringIO
 import unittest
 import make as MK
 import os 
-import sys 
 from unittest.mock import patch
-from unittest.mock import mock_open, MagicMock
+from unittest.mock import mock_open
 
 
 class TestParseMakefile(unittest.TestCase):
@@ -207,4 +206,3 @@ class TestMacrosInMakefile(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

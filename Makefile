@@ -72,5 +72,6 @@ deploy: create_scripts
 	sed 's/USER/$(CURRENTUSER)/g' ./fedora/docker-squid.service.template > ./fedora/docker-squid.service 
 	chmod 600 fedora/*.service 
 	sudo chown root:root fedora/*.service && sudo mv -f fedora/*.service /etc/systemd/system
+	sudo /sbin/restorecon -v /etc/systemd/system/docker-squid.service 
 	sudo systemctl enable docker-squid 
 	sudo systemctl start docker-squid 

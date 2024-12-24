@@ -1,42 +1,29 @@
+version: '3.8'
 
 services:
   cache-server:
+    volumes:
+      - squidcache:/var/spool/squid
+      - squidlogs:/var/log/squid
+      - ./squid.conf:/etc/squid/squid.conf:ro
+    environment:
+      - TZ=America/Denver
     build:
       context: .
-      dockerfile_inline: |
-        FROM alpine:latest
-        RUN apk update 
-        RUN apk --no-cache add tzdata squid bash vim 
-        RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-        COPY squid.conf /etc/squid 
-        RUN rm -rf /var/run/squid.pid && \
-          mkdir -p /cache && \
-          chown -R squid:squid /cache && \
-          chown -R squid:squid /var/log/squid && \
-          /usr/sbin/squid -N -z
     ports:
-      - 3128:3128
-    entrypoint: "/usr/sbin/squid -f /etc/squid/squid.conf -N -d9"
+      - "3128:3128"
     hostname: local-squid
     image: local-squid-img
     container_name: local-squid
-    volumes:
-      - squidcache:/cache
-    environment:
-      - TZ=America/Denver
     deploy:
       resources:
         limits:
-          cpus: "2"
-          memory: "1g"      
-    networks:
-      - shared_net
+          cpus: "4"
+          memory: "1g"
+    restart: unless-stopped
 
-# keep the old cache around
 volumes:
   squidcache:
-
-# use a bridge network so can be used by others
-networks:
-  shared_net:
-    driver: bridge 
+    driver: local
+  squidlogs:
+    driver: local

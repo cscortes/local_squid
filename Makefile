@@ -12,31 +12,28 @@ DOCKER_LIST=docker images --filter "reference=local-squid-img"
 info:
 	@echo "===================================================================="
 	@echo "Container:"
-	@$(CONTAINER_LIST) | grep home-web || echo "No container Found!"
+	@$(CONTAINER_LIST) | grep squid || echo "No container Found!"
 	@echo "-------------------------------------------------------------------"
 	@echo "Images:"
-	@$(DOCKER_LIST) | grep home-web || echo "No image Found!"
-	@echo "-------------------------------------------------------------------"
-	@echo "Mounts:"
-	@echo "$(MOUNTS)"
+	@$(DOCKER_LIST) | grep squid || echo "No image Found!"
 	@echo "===================================================================="
 
 build: docker-compose.yaml
 	@echo "Building the image ..."
-	docker compose build --pull
+	docker compose build
 
 #Forground server
-serve run start server: build 
+serve run start server:
 	@echo "Running the image in Forground"
 	docker compose up
 
 #Forground server
-bserve brun bstart bserver: build 
+bserve brun bstart bserver: 
 	@echo "Running the image in background"
 	docker compose up -d 
 
 run:
-	docker compose exec -i cache-server bash 
+	docker compose run -i cache-server bash 
 
 stop:
 	@echo "Stopping container ..."
